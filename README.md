@@ -70,20 +70,6 @@ Run TypeScript type checking:
 npm run type-check
 ```
 
-> [!IMPORTANT]
-> With `@mfe-orchestrator-hub/client@0.1.0` both `type-check` and `build` currently fail with a
-> single error on the `configure()` call in `src/index.ts`:
->
-> ```
-> TS2345: Argument of type '{ environment?: string | undefined; ... }' is not assignable to
-> parameter of type 'OrchestratorConfig'.
-> ```
->
-> The published typings still declare `environment` as required, while it is optional in practice
-> and this template omits the key on purpose. It clears itself with the next SDK release, which
-> types it as `environment?: string`. Do not paper over it with `any` or `@ts-ignore`: the emitted
-> JavaScript is already correct.
-
 ## How the orchestrator is wired in
 
 **The host never decides which version it gets.** It hands over the identities it holds and uses
@@ -205,7 +191,8 @@ React and React-DOM are configured as shared singleton dependencies with eager l
 - **TypeScript 5**: Type-safe JavaScript
 - **ts-loader**: TypeScript loader for Webpack
 - **style-loader & css-loader**: CSS processing
-- **@mfe-orchestrator-hub/client**: orchestrator client SDK. The range is `^0.1.0`, and a caret on a
+- **@mfe-orchestrator-hub/client**: orchestrator client SDK. The range is `^0.1.1`, the first
+  version where the environment is optional, and a caret on a
   `0.x` version is deliberately narrow: it accepts `0.1.x` only, **not** `0.2.0`. The SDK is new and
   parts of its API are still settling, so you have to widen this range yourself when it moves on
 
