@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Webpack + React + TypeScript + Module Federation Host",
   "main": "index.js",
+  "packageManager": "pnpm@11.21.0",
   "scripts": {
     "start": "webpack serve --mode development --open",
     "build": "webpack --mode production",
@@ -29,7 +30,7 @@
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.3",
-    "webpack": "^5.103.0",
+    "webpack": "^5.109.2",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
   }
