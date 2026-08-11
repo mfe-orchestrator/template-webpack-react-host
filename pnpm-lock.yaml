@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@mfe-orchestrator-hub/client':
+        specifier: ^0.1.0
+        version: 0.1.0
       react:
         specifier: ^19.2.0
         version: 19.2.8
@@ -190,6 +193,10 @@ packages:
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
+
+  '@mfe-orchestrator-hub/client@0.1.0':
+    resolution: {integrity: sha512-zlgAL/g8ckbauTgDAEt47d+szMHGuZ5C2zJgdHsa6wCzVjDoniLZIWf57YJrKPc3kdrjNUpTdalyOyp1JzJ3nQ==}
+    engines: {node: '>=20.0.0'}
 
   '@noble/hashes@1.4.0':
     resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
@@ -1817,6 +1824,8 @@ snapshots:
       tslib: 2.8.1
 
   '@leichtgewicht/ip-codec@2.0.5': {}
+
+  '@mfe-orchestrator-hub/client@0.1.0': {}
 
   '@noble/hashes@1.4.0': {}
 

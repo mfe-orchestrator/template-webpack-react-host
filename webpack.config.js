@@ -1,6 +1,10 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { ModuleFederationPlugin } = require('webpack').container;
+const webpack = require('webpack');
+const { ModuleFederationPlugin } = webpack.container;
 const path = require('path');
+
+// Optional: unset, or set to an empty string, means "let the backend decide".
+const environment = process.env.MFE_ENVIRONMENT?.trim();
 
 module.exports = {
   entry: './src/index',
@@ -36,6 +40,20 @@ module.exports = {
     ],
   },
   plugins: [
+    // Build time configuration of the orchestrator client, read back in src/index.ts.
+    // See .env.example.
+    new webpack.DefinePlugin({
+      'process.env.MFE_BACKEND_URL': JSON.stringify(
+        process.env.MFE_BACKEND_URL || 'https://console.mfe-orchestrator.dev/api'
+      ),
+      'process.env.MFE_PROJECT_ID': JSON.stringify(process.env.MFE_PROJECT_ID || ''),
+      // DefinePlugin pastes the text on the right into the bundle verbatim, so both
+      // cases are spelled out: a quoted slug when there is one, the bare identifier
+      // `undefined` when there is not. Never default this to a slug such as 'DEV':
+      // every build that forgets the variable would silently pin itself to that
+      // environment instead of letting the backend resolve it from the domain.
+      'process.env.MFE_ENVIRONMENT': environment ? JSON.stringify(environment) : 'undefined',
+    }),
     new ModuleFederationPlugin({
       name: 'host',
       filename: 'remoteEntry.js',
