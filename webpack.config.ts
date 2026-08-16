@@ -1,12 +1,17 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import webpack, { type Configuration } from 'webpack';
+import type { Configuration as DevServerConfiguration } from 'webpack-dev-server';
+
 const { ModuleFederationPlugin } = webpack.container;
-const path = require('path');
+
+interface WebpackConfiguration extends Configuration {
+  devServer?: DevServerConfiguration;
+}
 
 // Optional: unset, or set to an empty string, means "let the backend decide".
 const environment = process.env.MFE_ENVIRONMENT?.trim();
 
-module.exports = {
+const config: WebpackConfiguration = {
   entry: './src/index',
   mode: 'development',
   devServer: {
@@ -83,3 +88,5 @@ module.exports = {
     }),
   ],
 };
+
+export default config;

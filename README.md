@@ -27,7 +27,7 @@ A starter template for a Module Federation host application built with Webpack 5
 ├── .env.example
 ├── package.json
 ├── tsconfig.json
-├── webpack.config.js
+├── webpack.config.ts
 └── README.md
 ```
 
@@ -103,7 +103,7 @@ have been evaluated, so a remote could be resolved before the SDK knows where th
 
 `environment` is optional — see [Environment variables](#environment-variables).
 
-**2. The remote, declared in `webpack.config.js` as a promise that resolves to a URL:**
+**2. The remote, declared in `webpack.config.ts` as a promise that resolves to a URL:**
 
 ```javascript
 remotes: {
@@ -152,7 +152,7 @@ the backend resolves it from the domain the page is served on, matching it again
 declared for each environment in the console. One build artifact can therefore be promoted across
 DEV, STAGE and PROD unchanged.
 
-With webpack it takes two steps. `webpack.config.js` substitutes the bare identifier `undefined`
+With webpack it takes two steps. `webpack.config.ts` substitutes the bare identifier `undefined`
 for `process.env.MFE_ENVIRONMENT` when the variable is unset, empty, or only whitespace — **there
 is deliberately no `|| 'DEV'` fallback**, which would silently pin every build that forgot the
 variable to that one environment — and `src/index.ts` then drops the key instead of forwarding a
