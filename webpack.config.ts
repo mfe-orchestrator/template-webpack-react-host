@@ -32,10 +32,19 @@ const config: WebpackConfiguration = {
   module: {
     rules: [
       {
+        // swc only strips the types; `pnpm type-check` (TypeScript 7, which has no JS
+        // API for a loader to call) does the type checking.
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'ts-loader',
+          loader: 'swc-loader',
+          options: {
+            jsc: {
+              parser: { syntax: 'typescript', tsx: true },
+              transform: { react: { runtime: 'automatic' } },
+              target: 'es2020',
+            },
+          },
         },
       },
       {
