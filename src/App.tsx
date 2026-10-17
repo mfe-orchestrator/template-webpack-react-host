@@ -1,7 +1,32 @@
-import React from 'react';
+import React, { Component, lazy, Suspense, useState, type ReactNode } from 'react';
 import './App.css';
 
+// Example remote, declared in webpack.config.ts. Rename "exampleremote" and the
+// slug it points to, or delete both once you wire your own microfrontends.
+const RemoteButton = lazy(() => import('exampleremote/Button'));
+
+/** Keeps the host up when a remote cannot be loaded. */
+class RemoteBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    return this.state.failed ? (
+      <span className="remote-error">
+        Remote "example-remote" is not available. Point webpack.config.ts at one of your own slugs.
+      </span>
+    ) : (
+      this.props.children
+    );
+  }
+}
+
 const App: React.FC = () => {
+  const [clicks, setClicks] = useState(0);
+
   return (
     <div className="app">
       <header className="app-header">
@@ -12,13 +37,22 @@ const App: React.FC = () => {
         <div className="container">
           <h2>Welcome to the Host Application</h2>
           <p>
-            This is a Module Federation host application built with Webpack 5,
-            React, and TypeScript.
+            This host resolves its remotes through the orchestrator: it never knows,
+            and never chooses, which version it is served.
           </p>
+          <div className="remote">
+            <RemoteBoundary>
+              <Suspense fallback={<span>Loading remote…</span>}>
+                <RemoteButton onClick={() => setClicks(count => count + 1)}>
+                  Clicked {clicks} times
+                </RemoteButton>
+              </Suspense>
+            </RemoteBoundary>
+          </div>
           <div className="info-box">
             <h3>Getting Started</h3>
             <ul>
-              <li>Add remote microfrontends in webpack.config.js</li>
+              <li>Declare your remote microfrontends in webpack.config.ts</li>
               <li>Import and use remote components in your app</li>
               <li>Expose local components for other apps to consume</li>
             </ul>
