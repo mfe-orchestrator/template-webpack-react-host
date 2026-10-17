@@ -106,28 +106,48 @@ have been evaluated, so a remote could be resolved before the SDK knows where th
 
 `environment` is optional — see [Environment variables](#environment-variables).
 
-**2. The remote, declared in `webpack.config.ts` as a promise that resolves to a URL:**
+**2. The remote, declared in `webpack.config.ts` as a promise that resolves to the remote's container:**
 
 ```javascript
 remotes: {
-  exampleremote: `promise import('@mfe-orchestrator-hub/client').then(m => m.remoteUrl('example-remote'))`,
+  // key: what you import from; 'example-remote': the slug in the orchestrator;
+  // 'exampleremote': the scope, the remote's own ModuleFederationPlugin name
+  exampleremote: "promise globalThis.__MFE_ORCHESTRATOR__.loadWebpackRemote('example-remote', 'exampleremote')",
 }
 ```
 
-`remoteUrl('example-remote')` takes the **slug** of a microfrontend in the orchestrator and returns
-the URL the backend resolved for it, already pinned to a version. Rename the key and the slug to
-match your own microfrontends, and add one entry per remote. Never write a URL there by hand.
+- **The key** (`exampleremote`) is the name you import from: `import('exampleremote/Button')`.
+- **The slug** (`'example-remote'`) is the microfrontend in the orchestrator. `loadWebpackRemote()`
+  asks the backend for the URL it resolved for that slug, already pinned to a version, injects that
+  `remoteEntry.js` once and returns the container. Never write a URL there by hand.
+- **The scope** (`'exampleremote'`) is the `name` the remote gives its own `ModuleFederationPlugin`,
+  which is how webpack finds the container once the script has run. A remote created by the console
+  from a webpack template is named after its slug, slashes to underscores and dashes removed
+  (`checkout-new` → `checkoutnew`), the same name the console writes in the configs it generates.
+  Left out, it is the `nameToIntegrate` the manifest gives for the slug, which is that same name.
 
-Remotes are invisible to the compiler, so declare each module you import in `src/globals.d.ts`:
+`loadWebpackRemote` is a global because ModuleFederationPlugin pastes a `promise` remote into the
+bundle verbatim: it cannot import a package. `configure()` publishes it on
+`globalThis.__MFE_ORCHESTRATOR__`, which is one more reason it runs first.
+
+Rename the key, the slug and the scope to match your own microfrontends, and add one entry per
+remote. Remotes are invisible to the compiler, so declare each module you import in
+`src/globals.d.ts`:
 
 ```ts
-declare module 'exampleremote/Button';
+declare module 'exampleremote/Button' {
+  import type { FC, ReactNode } from 'react';
+
+  const Button: FC<{ onClick?: () => void; children?: ReactNode }>;
+  export default Button;
+}
 ```
 
-Then import and use remote components in your code:
+Then use it in your code. `src/App.tsx` loads it lazily, behind an error boundary so the host still
+renders when the remote is not available:
 
 ```typescript
-import RemoteComponent from 'exampleremote/Button';
+const RemoteButton = lazy(() => import('exampleremote/Button'));
 ```
 
 The SDK also exposes `manifest()`, `globalVariables()` and `identities()`, so you can see what the
@@ -195,16 +215,17 @@ React and React-DOM are configured as shared singleton dependencies with eager l
   no JS API for a webpack loader to call
 - **swc-loader**: strips the types and compiles the JSX for Webpack
 - **style-loader & css-loader**: CSS processing
-- **@mfe-orchestrator-hub/client**: orchestrator client SDK. The range is `^0.2.1`, and a caret on a
-  `0.x` version is deliberately narrow: it accepts `0.2.x` only, **not** `0.3.0`. The SDK is new and
+- **@mfe-orchestrator-hub/client**: orchestrator client SDK. The range is `^0.3.0`, and a caret on a
+  `0.x` version is deliberately narrow: it accepts `0.3.x` only, **not** `0.4.0`. The SDK is new and
   parts of its API are still settling, so you have to widen this range yourself when it moves on.
-  Since `0.2.0`, `configure()` throws with an explanation when `backendUrl` or `projectId` is
-  missing, empty or still a placeholder, so a build without `MFE_PROJECT_ID` fails on load instead
-  of asking the backend for nothing
+  `0.3.0` is the first version with `loadWebpackRemote()`, which the remote declaration above needs.
+  `configure()` throws with an explanation when `backendUrl` or `projectId` is missing, empty or
+  still a placeholder, so a build without `MFE_PROJECT_ID` fails on load instead of asking the
+  backend for nothing
 
 ## Notes
 
-- `configure()` runs in `src/index.ts`, before the `import('./bootstrap')` that starts the app. Keep that order: the federation runtime imports the SDK to resolve a remote and expects it already configured
+- `configure()` runs in `src/index.ts`, before the `import('./bootstrap')` that starts the app. Keep that order: it publishes the `loadWebpackRemote()` the remote declarations call, and a remote must not be resolved before the SDK knows where the backend is
 - The entry point uses dynamic import (`import('./bootstrap')`) to ensure Module Federation loads remote dependencies before the application starts
 - `output.publicPath` stays `'auto'`. A classic script derives the base of its chunks from `document.currentScript.src`, which is the URL *before* any redirect, so this is what keeps a version pinned entry loading its own chunks instead of mixing two builds in one page
 - Dev server runs on port 3000 by default

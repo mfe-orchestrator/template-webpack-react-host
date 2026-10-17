@@ -72,8 +72,16 @@ const config: WebpackConfiguration = {
       name: 'host',
       filename: 'remoteEntry.js',
       remotes: {
-        // Example: 'remote1': 'remote1@http://localhost:3001/remoteEntry.js',
-        // Add your remote microfrontends here
+        // One entry per microfrontend this host consumes:
+        // - the key is the name you import from ("exampleremote/Button");
+        // - 'example-remote' is the *slug* of the microfrontend in the orchestrator;
+        // - 'exampleremote' is the scope, the remote's own ModuleFederationPlugin
+        //   `name`. A remote created by the console from a webpack template is named
+        //   after its slug, slashes to underscores and dashes removed.
+        // Never write a URL here: the backend decides which version is served, and
+        // loadWebpackRemote() resolves it, injects that remoteEntry.js and returns the
+        // container. The SDK publishes it on globalThis when configure() runs.
+        exampleremote: "promise globalThis.__MFE_ORCHESTRATOR__.loadWebpackRemote('example-remote', 'exampleremote')",
       },
       exposes: {
         // Example: './Button': './src/components/Button',

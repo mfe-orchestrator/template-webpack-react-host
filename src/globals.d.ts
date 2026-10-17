@@ -25,10 +25,14 @@ declare const process: {
 
 /**
  * Remotes are resolved at runtime, so the compiler cannot see their types.
- * Add one line per remote module you import, ex.:
- *
- * declare module 'exampleremote/Button';
+ * Declare each remote module you import.
  */
+declare module 'exampleremote/Button' {
+  import type { FC, ReactNode } from 'react';
+
+  const Button: FC<{ onClick?: () => void; children?: ReactNode }>;
+  export default Button;
+}
 
 /** Stylesheets are bundled by css-loader and style-loader, ex. `import './App.css'`. */
 declare module '*.css';

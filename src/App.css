@@ -83,3 +83,11 @@ body {
 .info-box li {
   padding-left: 0.5rem;
 }
+
+.remote {
+  margin: 1.5rem 0;
+}
+
+.remote-error {
+  color: #b4530a;
+}
