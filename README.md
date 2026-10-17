@@ -1,6 +1,6 @@
 # Webpack React TypeScript Module Federation Host
 
-A starter template for a Module Federation host application built with Webpack 5, React 18, and TypeScript.
+A starter template for a Module Federation host application built with Webpack 5, React 19, and TypeScript.
 
 ## Features
 
@@ -35,8 +35,11 @@ A starter template for a Module Federation host application built with Webpack 5
 
 ### Installation
 
+Node.js 22.18 or later: webpack-cli loads `webpack.config.ts` through Node's built-in type
+stripping, so there is no ts-node.
+
 ```bash
-npm install
+pnpm install
 ```
 
 ### Development
@@ -44,14 +47,14 @@ npm install
 Start the development server:
 
 ```bash
-npm start
+pnpm start
 ```
 
 The application will open at [http://localhost:3000](http://localhost:3000)
 
 Alternative commands:
 ```bash
-npm run dev    # Start dev server without auto-opening browser
+pnpm dev        # Start dev server without auto-opening browser
 ```
 
 ### Build
@@ -59,7 +62,7 @@ npm run dev    # Start dev server without auto-opening browser
 Create a production build:
 
 ```bash
-npm run build
+pnpm build
 ```
 
 ### Type Checking
@@ -67,7 +70,7 @@ npm run build
 Run TypeScript type checking:
 
 ```bash
-npm run type-check
+pnpm type-check
 ```
 
 ## How the orchestrator is wired in
@@ -188,13 +191,16 @@ React and React-DOM are configured as shared singleton dependencies with eager l
 
 - **Webpack 5**: Module bundler with Module Federation
 - **React 19**: UI library
-- **TypeScript 5**: Type-safe JavaScript
-- **ts-loader**: TypeScript loader for Webpack
+- **TypeScript 7**: Type-safe JavaScript. It only type checks (`pnpm type-check`): TypeScript 7 has
+  no JS API for a webpack loader to call
+- **swc-loader**: strips the types and compiles the JSX for Webpack
 - **style-loader & css-loader**: CSS processing
-- **@mfe-orchestrator-hub/client**: orchestrator client SDK. The range is `^0.1.1`, the first
-  version where the environment is optional, and a caret on a
-  `0.x` version is deliberately narrow: it accepts `0.1.x` only, **not** `0.2.0`. The SDK is new and
-  parts of its API are still settling, so you have to widen this range yourself when it moves on
+- **@mfe-orchestrator-hub/client**: orchestrator client SDK. The range is `^0.2.1`, and a caret on a
+  `0.x` version is deliberately narrow: it accepts `0.2.x` only, **not** `0.3.0`. The SDK is new and
+  parts of its API are still settling, so you have to widen this range yourself when it moves on.
+  Since `0.2.0`, `configure()` throws with an explanation when `backendUrl` or `projectId` is
+  missing, empty or still a placeholder, so a build without `MFE_PROJECT_ID` fails on load instead
+  of asking the backend for nothing
 
 ## Notes
 

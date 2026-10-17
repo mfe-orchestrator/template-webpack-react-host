@@ -1,0 +1,4 @@
+allowBuilds:
+  # The postinstall only double checks the native binary that the platform specific
+  # optional dependency already ships, so it is not needed.
+  '@swc/core': false

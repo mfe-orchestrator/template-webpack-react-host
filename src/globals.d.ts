@@ -29,3 +29,6 @@ declare const process: {
  *
  * declare module 'exampleremote/Button';
  */
+
+/** Stylesheets are bundled by css-loader and style-loader, ex. `import './App.css'`. */
+declare module '*.css';
