@@ -117,7 +117,7 @@ remotes: {
 ```
 
 - **The key** (`exampleremote`) is the name you import from: `import('exampleremote/Button')`.
-- **The slug** (`'example-remote'`) is the microfrontend in the orchestrator. `loadWebpackRemote()`
+- **The slug** (`'example-remote'`) is the frontend in the orchestrator. `loadWebpackRemote()`
   asks the backend for the URL it resolved for that slug, already pinned to a version, injects that
   `remoteEntry.js` once and returns the container. Never write a URL there by hand.
 - **The scope** (`'exampleremote'`) is the `name` the remote gives its own `ModuleFederationPlugin`,
@@ -130,7 +130,7 @@ remotes: {
 bundle verbatim: it cannot import a package. `configure()` publishes it on
 `globalThis.__MFE_ORCHESTRATOR__`, which is one more reason it runs first.
 
-Rename the key, the slug and the scope to match your own microfrontends, and add one entry per
+Rename the key, the slug and the scope to match your own frontends, and add one entry per
 remote. Remotes are invisible to the compiler, so declare each module you import in
 `src/globals.d.ts`:
 
@@ -203,7 +203,7 @@ exposes: {
 ### Shared Dependencies
 
 React and React-DOM are configured as shared singleton dependencies with eager loading. This ensures:
-- Only one instance of React runs across all microfrontends
+- Only one instance of React runs across all frontends
 - React is loaded immediately with the host application
 - Version compatibility is enforced
 

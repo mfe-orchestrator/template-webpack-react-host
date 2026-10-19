@@ -2,7 +2,7 @@ import React, { Component, lazy, Suspense, useState, type ReactNode } from 'reac
 import './App.css';
 
 // Example remote, declared in webpack.config.ts. Rename "exampleremote" and the
-// slug it points to, or delete both once you wire your own microfrontends.
+// slug it points to, or delete both once you wire your own frontends.
 const RemoteButton = lazy(() => import('exampleremote/Button'));
 
 /** Keeps the host up when a remote cannot be loaded. */
@@ -52,7 +52,7 @@ const App: React.FC = () => {
           <div className="info-box">
             <h3>Getting Started</h3>
             <ul>
-              <li>Declare your remote microfrontends in webpack.config.ts</li>
+              <li>Declare your remote frontends in webpack.config.ts</li>
               <li>Import and use remote components in your app</li>
               <li>Expose local components for other apps to consume</li>
             </ul>
